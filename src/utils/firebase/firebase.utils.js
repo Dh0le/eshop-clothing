@@ -1,15 +1,13 @@
-import { async } from "@firebase/util";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
-  EmailAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, endAt } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyA6dqqrw8-GjuTSZanz1J52teJkp5uWjxs",
   authDomain: "ecommerceshop-113d0.firebaseapp.com",
@@ -24,7 +22,6 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 const googleProvider = new GoogleAuthProvider();
-const emailProvider = new EmailAuthProvider();
 googleProvider.setCustomParameters({
   prompt: "select_account",
 });
@@ -34,10 +31,6 @@ export const signInWithGooglePopup = () =>
   signInWithPopup(auth, googleProvider);
 export const signInWithGoogleRedirect = () =>
   signInWithRedirect(auth, googleProvider);
-
-export const signInWithEmail = () =>
-  signInWithEmailAndPassword(auth, emailProvider);
-
 export const db = getFirestore();
 export const createUserDocumentFromAuth = async (
   userAuth,
@@ -66,4 +59,9 @@ export const createUserDocumentFromAuth = async (
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
   return await createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+  return await signInWithEmailAndPassword(auth, email, password);
 };
