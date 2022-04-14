@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import {
   createAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth,
@@ -6,7 +6,6 @@ import {
 import Button from "../button/button.component";
 import FormInput from "../form-input/form-input.component";
 import "./sign-up-form.style.scss";
-import { UserContext } from "../../contexts/user.context";
 const SignUpForm = () => {
   //set default form field
   const defaultFormFields = {
@@ -20,7 +19,6 @@ const SignUpForm = () => {
   // destructure the formField value
   const { displayName, email, password, confirmPassword } = formFields;
   // get user context
-  const { setCurrentUser } = useContext(UserContext);
   const resetFormFields = () => {
     setFormField(defaultFormFields);
   };
@@ -37,7 +35,6 @@ const SignUpForm = () => {
         email,
         password
       );
-      setCurrentUser(user);
       // then we create user in our firestore database
       await createUserDocumentFromAuth(user, { displayName });
       resetFormFields();
