@@ -1,22 +1,30 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   createAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth,
 } from "../../utils/firebase/firebase.utils";
 import Button from "../button/button.component";
-
 import FormInput from "../form-input/form-input.component";
 import "./sign-up-form.style.scss";
+import { UserContext } from "../../contexts/user.context";
 const SignUpForm = () => {
+  //set default form field
   const defaultFormFields = {
     displayName: "",
     email: "",
     password: "",
     confirmPassword: "",
   };
-
+  // use use state hook for form field
   const [formFields, setFormField] = useState(defaultFormFields);
+  // destructure the formField value
   const { displayName, email, password, confirmPassword } = formFields;
+  // get user context
+  const { setCurrentUser } = useContext(UserContext);
+  const resetFormFields = () => {
+    setFormField(defaultFormFields);
+  };
+  // helper function to handle submit event
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (password != confirmPassword) {
@@ -24,11 +32,15 @@ const SignUpForm = () => {
       return;
     }
     try {
+      // first we create user in auth
       const { user } = await createAuthUserWithEmailAndPassword(
         email,
         password
       );
+      setCurrentUser(user);
+      // then we create user in our firestore database
       await createUserDocumentFromAuth(user, { displayName });
+      resetFormFields();
     } catch (error) {
       if (error.code == "auth/email-already-in-use") {
         alert("Cannot create user: email already in use");
@@ -37,6 +49,7 @@ const SignUpForm = () => {
       }
     }
   };
+  // function to handle change when user enter something in the form field
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormField({ ...formFields, [name]: value });

@@ -1,36 +1,47 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   createUserDocumentFromAuth,
   signInAuthUserWithEmailAndPassword,
   signInWithGooglePopup,
 } from "../../utils/firebase/firebase.utils";
 import Button from "../button/button.component";
+import { UserContext } from "../../contexts/user.context";
 import FormInput from "../form-input/form-input.component";
 import "./sign-in-form.style.scss";
+
 const SignInForm = () => {
+  // set a default form field
   const defaultFormFields = {
     email: "",
     password: "",
   };
+  // set a use state hook for form field
   const [formFields, setFormField] = useState(defaultFormFields);
   const { email, password } = formFields;
 
+  // set hook with context
+  const { setCurrentUser } = useContext(UserContext);
+
+  // helper function to reset form field
   const resetFormFields = () => {
     setFormField(defaultFormFields);
   };
+  // a function to sign in with google popup
   const signInWithGoogle = async () => {
     const { user } = await signInWithGooglePopup();
     await createUserDocumentFromAuth(user);
   };
 
+  // a handle function for submit event of the form
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await signInAuthUserWithEmailAndPassword(
+      const { user } = await signInAuthUserWithEmailAndPassword(
         email,
         password
       );
-      console.log(response);
+      // once the user is signed in, we set user context using setcurrent user
+      setCurrentUser(user);
       resetFormFields();
     } catch (error) {
       switch (error.code) {
@@ -46,6 +57,7 @@ const SignInForm = () => {
       }
     }
   };
+  // once user type in in the form field, we update our state
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormField({ ...formFields, [name]: value });
@@ -74,6 +86,7 @@ const SignInForm = () => {
           value={password}
           minLength="6"
         />
+
         <div className="buttons-container">
           <Button type="submit">Sign In</Button>
           <Button type="button" buttonType="google" onClick={signInWithGoogle}>

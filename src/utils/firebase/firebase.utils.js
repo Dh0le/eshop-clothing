@@ -6,8 +6,10 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyA6dqqrw8-GjuTSZanz1J52teJkp5uWjxs",
   authDomain: "ecommerceshop-113d0.firebaseapp.com",
@@ -21,24 +23,34 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
+// acquire and set up google sign in provider
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
+// get auth singleton
 export const auth = getAuth();
+// create two type of sign in with google
 export const signInWithGooglePopup = () =>
   signInWithPopup(auth, googleProvider);
+
 export const signInWithGoogleRedirect = () =>
   signInWithRedirect(auth, googleProvider);
+
+// get singleton of firestore database
 export const db = getFirestore();
+
+// a function to create user profile in firestore databse using auth info.
 export const createUserDocumentFromAuth = async (
   userAuth,
   additionalInformation
 ) => {
+  // if current user is not authenticated
   if (!userAuth) return;
   const userDocRef = doc(db, "users", userAuth.uid);
   const userSnapShot = await getDoc(userDocRef);
+  // if current auth user is not found in our database
   if (!userSnapShot.exists()) {
     const { displayName, email } = userAuth;
     const createAt = new Date();
@@ -65,3 +77,5 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 };
+
+export const signOutUser = () => signOut(auth);
