@@ -17,6 +17,33 @@ const addCartItem = (cartItems, productToAdd) => {
   // else return new  array with modified items.
   return [...cartItems, { ...productToAdd, quantity: 1 }];
 };
+
+const decreseCartItem = (cartItems, productToDecrease) => {
+  // we always create a new array
+  // find if cartItems already contain product to decrease
+  const targetItem = cartItems.find((cartItem) => {
+    if (cartItem.id === productToDecrease.id) {
+      return cartItem.quantity;
+    }
+  });
+  const curQuantity = targetItem.quantity;
+
+  if (curQuantity === 1) {
+    return removeItem(cartItems, productToDecrease);
+  }
+  // else return new  array with modified items.
+  return cartItems.map((cartItem) =>
+    cartItem.id === productToDecrease.id
+      ? { ...cartItem, quantity: cartItem.quantity - 1 }
+      : cartItem
+  );
+};
+
+const removeItem = (cartItems, productToRemove) => {
+  // we can only remove items from existing cart
+  return cartItems.filter((cartItem) => cartItem.id !== productToRemove.id);
+};
+
 export const CartContext = createContext({
   isCartOpen: false,
   setIsCartOpen: () => {},
@@ -24,6 +51,7 @@ export const CartContext = createContext({
   addItemToCart: () => {},
   cartCount: 0,
   setCartCount: () => {},
+  removeItemFromCart: () => {},
 });
 
 export const CartProvider = ({ children }) => {
@@ -40,12 +68,20 @@ export const CartProvider = ({ children }) => {
   const addItemToCart = (productToAdd) => {
     setCartItems(addCartItem(cartItems, productToAdd));
   };
+  const decreaseItemFromCart = (productToDecrease) => {
+    setCartItems(decreseCartItem(cartItems, productToDecrease));
+  };
+  const removeItemFromCart = (productToRemove) => {
+    setCartItems(removeItem(cartItems, productToRemove));
+  };
   const value = {
     isCartOpen,
     setIsCartOpen,
     cartItems,
     addItemToCart,
     cartCount,
+    decreaseItemFromCart,
+    removeItemFromCart,
   };
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
