@@ -1,6 +1,4 @@
 import { GoogleSignButton, InvertedButton, BaseButton } from "./button.styles";
-import "./button.styles.scss";
-
 // there will be three type of buttons, default, inverted, and google sign in.
 export const BUTTON_TYPE_CLASSES = {
   base: "base",
