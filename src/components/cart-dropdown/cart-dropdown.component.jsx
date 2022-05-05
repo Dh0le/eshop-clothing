@@ -1,4 +1,3 @@
-import "./cart-dropdown.style.scss";
 import {
   CartDropDownContainer,
   CartItems,
