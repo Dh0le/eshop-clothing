@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import CartItem from "../cart-item/cart-item.component";
 import {
   BaseButton,
   InvertedButton,
