@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-export const Body = styled(Link)`
+export const Body = styled.div`
   height: 90px;
   padding: 0 25px;
   display: flex;
