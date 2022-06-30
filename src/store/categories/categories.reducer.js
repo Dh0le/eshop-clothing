@@ -11,7 +11,6 @@ export const categoriesReducer = (
   const { type, payload } = action;
   switch (type) {
     case CATEGORIES_ACTION_TYPE.SET_CATEGORIES:
-      console.log(payload);
       return { ...state, categories: payload };
     default:
       return state;
